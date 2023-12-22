@@ -10,16 +10,17 @@ const catalogRouter = require('./routes/catalog')
 const compression = require("compression");
 const helmet = require("helmet");
 
+
 var app = express();
+const port = 8080;
 
 const mongoose = require('mongoose')
-
 // Set up mongoose connection
 
 mongoose.set("strictQuery", false);
 // Define the database URL to connect to.
 const dev_db_url =
-  "mongodb+srv://ginapertance:1oHRV55QzviH89ay@cluster0.tn5m5sr.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://ginapertance:1aONBxZt8Uaf8Oct@cluster0.tn5m5sr.mongodb.net/?retryWrites=true&w=majority";
 const mongoDB = process.env.MONGO_URL || dev_db_url;
 
 main().catch((err) => console.log(err));
@@ -29,7 +30,9 @@ async function main() {
 
 // view engine setup
 app.use(express.static(__dirname + '/public'));
+
 app.set('view engine', 'ejs')
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -37,6 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(compression())
 app.use(helmet());
+
 
 app.use('/', indexRouter);
 app.use('/catalog', catalogRouter)
@@ -56,5 +60,9 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.listen(port, () => {
+  console.log(`App listening at port ${port}`)
+})
 
 module.exports = app;
