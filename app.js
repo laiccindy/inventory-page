@@ -1,9 +1,10 @@
 const express = require('express');
 const mongoose = require ('mongoose');
 const bodyParser = require('body-parser');
+const logger = require('morgan')
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = 8080;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -11,6 +12,7 @@ app.set('view engine', 'ejs')
 
 // Connect to MongoDB
 const mongoAtlas = 'mongodb+srv://ginapertance:fOyzpR8GnAaBKMbg@cluster0.tn5m5sr.mongodb.net/?retryWrites=true&w=majority';
+const client = new MongoClient(mongoAtlas);
 
 mongoose.connect(mongoAtlas, { useNewUrlPaser: true, useUnifiedTopology: true });
 
@@ -113,6 +115,6 @@ app.get('/search', async (req,res)=>{
 })
 
 
-app.listen(port, ()=>{
-  console.log(`Server listening on port ${port}`);
-});
+app.listen(port, () => {
+  console.log(`App listening at port ${port}`)
+})
