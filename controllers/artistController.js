@@ -1,6 +1,6 @@
 const artist = require('../models/artist.js');
 const song = require('../models/song.js');
-const asyncHandler = require('express-asyn-handler');
+const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 
 exports.artist_list = asyncHandler(async (req, res, next)=>{

@@ -99,7 +99,7 @@ exports.song_create_post = [
 
 exports.song_delete_post = [
   body('password')
-  .equals(proess.env.password)
+  .equals(process.env.password)
   .withMessage('wrong password'),
 
   asyncHandler(async (req,res,next)=>{

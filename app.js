@@ -1,120 +1,43 @@
 const express = require('express');
-const mongoose = require ('mongoose');
-const bodyParser = require('body-parser');
-const logger = require('morgan')
+const path = require('path');
+const logger = require('morgan');
 
-const app = express();
+const mongoose = require('mongoose');
+
+const indexRouter = require('./routes/index');
+const catalogRouter = require('./routes/catalog')
+
+const app = express()
 const port = 8080;
-
 app.use(express.static(__dirname + '/public'));
-
 app.set('view engine', 'ejs')
 
-// Connect to MongoDB
-const mongoAtlas = 'mongodb+srv://ginapertance:fOyzpR8GnAaBKMbg@cluster0.tn5m5sr.mongodb.net/?retryWrites=true&w=majority';
-const client = new MongoClient(mongoAtlas);
+// Set up mongoose connection
 
-mongoose.connect(mongoAtlas, { useNewUrlPaser: true, useUnifiedTopology: true });
+mongoose.set("strictQuery", false);
+// Define the database URL to connect to.
+const dev_db_url =
+  "mongodb+srv://ginapertance:KwAdPZCl2MmloVgd@cluster0.tn5m5sr.mongodb.net/?retryWrites=true&w=majority";
+const mongoDB = process.env.MONGO_URL || dev_db_url;
 
-// Database model
-
-const gameModel = mongoose.model('Game', {
-  title: String,
-  platform: String,
-  genre: String,
-  releaseDate: Date,
-});
-
-app.use(bodyParser.json());
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 
-app.post('/games', async (req,res)=> {
-  const { title, platform, genre, releaseDate } =  req.body;
-  const game = new gameModel({ title, platform, genre, releaseDate });
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-  try {
-    await game.save();
-    res.json(game);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' })
-  }
-})
+app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.get('/games/', async (req, res)=>{
-  try {
-    const games = await gameModel.find();
-    res.json(games);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-app.get('/games/:id', async (req,res)=>{
-  const gameId  =  req.params.id;
-
-  try {
-    const game = await gameModel.findById(gameId);
-    if(!game) {
-      return res.status(404).json({ error: 'Game not found' });
-    }
-    res.json(game);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-app.put('/games/:id', async (req,res)=>{
-  const gameId = req.params.id;
-  const { title, platform, genre, releaseDate } = req.body;
-
-  try {
-    const game = await gameModel.findByIdAndUpdate(gameId, { title, platform, genre, releaseDate }, { new: true});
-    if(!game)   {
-      return res.status(40).json({ error: 'Game not found'});
-    }
-    res.json(game);
-  } catch(error) {
-    res.status(500).json({ error: 'Internal Server Error '});
-  }
-});
-
-
-app.delete('/games/:id', async (req,res)=> {
-  const gameId = req.params.id;
-
-  try {
-    const game = await Gamepad.findByIDAndDelete(gameId);
-    if(!game) {
-      return res.status(404).json({ error: 'Game not found'});
-    }
-    res.json({ message: 'Game deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error'});
-  }
-});
-
-
-app.get('/search', async (req,res)=>{
-  const query = req.query.q;
-
-  try {
-    const results = await gameModel.find({
-      $or: [
-        { title: { $regex: query, $options: 'i' }},
-        { platform: { $regex: query, $options: 'i' }},
-        { gerne: { $regex: query, $options: 'i' }},
-      ],
-    });
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
+app.use('/', indexRouter);
+app.use('/catalog', catalogRouter)
 
 
 app.listen(port, () => {
   console.log(`App listening at port ${port}`)
 })
+
+module.exports = app;
