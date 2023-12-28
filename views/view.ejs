@@ -1,0 +1,47 @@
+<div class="d-flex justify-content-between flex-wrap flex-md nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2"><%= song.songTitle %> by <%= song.artist %></h1>
+</div>
+
+<div class="col py-3">
+
+  <div class="row">
+    <div class="col">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Song Inventory Page</a></li>
+          <li class="breadcrumb-item active"><%= song.songTitle %></li>
+        </ol>
+      </nav>
+    </div>
+    <div class="col text-end fw-lighter pt-1" style="font-size: 12px">
+      <b>Last Updated <%= new Date(song.updatedAt).toUTCString() %></b>
+    </div>
+  </div>
+</div>
+
+<ul class="list-group">
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col" style="max-width: 140px"><b>Song Title:</b></div>
+      <div class="col"><%= song.songTitle %></div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col" style="max-width: 140px"><b>Artist:</b></div>
+      <div class="col"><%= song.artist %></div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col" style="max-width: 140px"><b>Genre:</b></div>
+      <div class="col"><%= song.genre %></div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col" style="max-width: 140px"><b>Release Year:</b></div>
+      <div class="col"><%= song.releaseYear %></div>
+    </div>
+  </li>
+</ul>
