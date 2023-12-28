@@ -27,7 +27,6 @@ main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect(mongoDB);
 }
-
 // view engine setup
 app.use(express.static(__dirname + '/public'));
 
